@@ -108,4 +108,15 @@ class CategoriesController extends Controller
 
         return response()->json($categories);
     }
+
+    public function orderBy(Request $request)
+    {
+        $data = $request->query('data');
+        $by = $request->query('by');
+        $categories = Category::withCount('products')
+            ->orderBy("$data", "$by")
+            ->paginate(20);
+        return view('admin.categories.index', compact('categories'));
+
+    }
 }

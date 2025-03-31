@@ -23,6 +23,7 @@ Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('user.destroy');
         Route::post('/confirm-password', [UserController::class, 'confirmPassword'])->name('user.confirmPassword');
         Route::get('/search', [UserController::class, 'search'])->name('user.search');
+        Route::get('/orderby', [UserController::class, 'orderby'])->name('user.orderby');
     });
     Route::prefix('admin/categories')->group(function () {
         Route::get('/', [CategoriesController::class, 'index'])->name('categories.index');
@@ -32,6 +33,7 @@ Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
         Route::patch('/{categories}', [CategoriesController::class, 'update'])->name('categories.update');
         Route::delete('/{categories}', [CategoriesController::class, 'destroy'])->name('categories.destroy');
         Route::get('/search', [CategoriesController::class, 'search'])->name('categories.search');
+        Route::get('/orderby', [CategoriesController::class, 'orderby'])->name('categories.orderby');
     });
     Route::prefix('admin/products')->group(function () {
         Route::get('/', [ProductsController::class, 'index'])->name('products.index');
@@ -41,7 +43,7 @@ Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
         Route::patch('/{product}', [ProductsController::class, 'update'])->name('products.update');
         Route::delete('/{product}', [ProductsController::class, 'destroy'])->name('products.destroy');
         Route::get('/search', [ProductsController::class, 'search'])->name('products.search');
-        Route::get('/orderby', [ProductsController::class,'orderBy'])->name('products.orderby');
+        Route::get('/orderby', [ProductsController::class, 'orderBy'])->name('products.orderby');
     });
 });
 

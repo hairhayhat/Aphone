@@ -22,7 +22,7 @@
                 <div class="flex items-center justify-between p-6 text-gray-900">
 
                     <h2 class="font-semibold text-xl">
-                        {{ __('Trang quản lý danh mục') }}
+                        {{ __('Categories manager') }}
                     </h2>
 
                     <div class="d-flex align-items-center gap-3 mb-3">
@@ -34,10 +34,51 @@
                             <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
-                            <input type="text" id="searchInput" placeholder="Tìm kiếm danh mục..."
+                            <input type="text" id="searchInput" placeholder="Search for categories..."
                                 class="form-control">
                         </div>
+
+                        <div class="dropdown" style="width: 150px; position: relative;">
+                            <button class="btn btn-dark dropdown-toggle w-100" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-filter me-2"></i> Sort By
+                            </button>
+
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="min-width: 100%;">
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('categories.orderby', ['data' => 'name', 'by' => 'ASC']) }}">
+                                        <i class="fas fa-sort-alpha-down"></i> Name
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('categories.orderby', ['data' => 'products_count', 'by' => 'DESC']) }}">
+                                        <i class="fas fa-sort-amount-up"></i> Most products
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('categories.orderby', ['data' => 'products_count', 'by' => 'ASC']) }}">
+                                        <i class="fas fa-sort-amount-down"></i> Least products
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('categories.orderby', ['data' => 'created_at', 'by' => 'DESC']) }}">
+                                        <i class="fas fa-calendar-plus"></i> Latest
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('categories.orderby', ['data' => 'created_at', 'by' => 'ASC']) }}">
+                                        <i class="fas fa-calendar-minus"></i> Oldest
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
+
                 </div>
 
 
@@ -63,7 +104,8 @@
                                     <td>{{ $cate->products_count }} Products</td>
                                     <td class="d-flex justify-content-center gap-2">
                                         <!-- Nút Edit -->
-                                        <a href="{{ route('categories.edit', $cate->id) }}" class="btn btn-dark btn-sm">
+                                        <a href="{{ route('categories.edit', $cate->id) }}"
+                                            class="btn btn-dark btn-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
 

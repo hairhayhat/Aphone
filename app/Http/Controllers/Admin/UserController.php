@@ -69,4 +69,14 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    public function orderBy(Request $request)
+    {
+        $data = $request->query('data');
+        $by = $request->query('by');
+        $users = User::orderBy("$data", "$by")
+            ->paginate(20);
+        return view('admin.users.index', compact('users'));
+
+    }
+
 }

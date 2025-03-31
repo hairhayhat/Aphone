@@ -10,10 +10,50 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="flex items-center justify-between p-6 text-gray-900">
                     <h2 class="font-semibold text-xl">
-                        {{ __('Trang quản lý tài khoản') }}
+                        {{ __('User manager') }}
                     </h2>
-                    <input type="text" id="searchInput" placeholder="Tìm kiếm tài khoản..."
-                        class="p-2 border border-gray-300 rounded">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+
+                        {{-- search --}}
+                        <div class="input-group flex-grow-1">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" id="searchInput" placeholder="Search for users..."
+                                class="form-control">
+                        </div>
+
+                        {{-- sortby --}}
+                        <div class="dropdown" style="width: 150px; position: relative;">
+                            <button class="btn btn-dark dropdown-toggle w-100" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-filter me-2"></i> Sort By
+                            </button>
+
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="min-width: 100%;">
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('user.orderby', ['data' => 'name', 'by' => 'ASC']) }}">
+                                        <i class="fas fa-sort-alpha-down"></i> Name
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('user.orderby', ['data' => 'created_at', 'by' => 'DESC']) }}">
+                                        <i class="fas fa-calendar-plus"></i> Latest
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                        href="{{ route('user.orderby', ['data' => 'created_at', 'by' => 'ASC']) }}">
+                                        <i class="fas fa-calendar-minus"></i> Oldest
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                    </div>
                 </div>
 
 

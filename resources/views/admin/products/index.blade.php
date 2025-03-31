@@ -22,7 +22,7 @@
                 <div class="flex items-center justify-between p-6 text-gray-900">
 
                     <h2 class="font-semibold text-xl">
-                        {{ __('Trang quản lý sản phẩm') }}
+                        {{ __('Products manager') }}
                     </h2>
 
                     <div class="d-flex align-items-center gap-3 mb-3">
@@ -30,48 +30,51 @@
                             <i class="fas fa-plus me-1"></i> Add new product
                         </a>
 
+                        {{-- search --}}
                         <div class="input-group flex-grow-1">
                             <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
-                            <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..."
+                            <input type="text" id="searchInput" placeholder="Search for products..."
                                 class="form-control">
                         </div>
 
-
+                        {{-- sortby --}}
                         <div class="dropdown" style="width: 150px; position: relative;">
                             <button class="btn btn-dark dropdown-toggle w-100" type="button" id="dropdownMenuButton"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-filter me-2"></i> Lọc theo
+                                <i class="fas fa-filter me-2"></i> Sort By
                             </button>
 
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="min-width: 100%;">
                                 <li>
                                     <a class="dropdown-item"
                                         href="{{ route('products.orderby', ['data' => 'name', 'by' => 'ASC']) }}">
-                                        <i class="fas fa-sort-alpha-down"></i> Tên
+                                        <i class="fas fa-sort-alpha-down"></i> Name
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item"
                                         href="{{ route('products.orderby', ['data' => 'price', 'by' => 'ASC']) }}">
-                                        <i class="fas fa-sort-amount-up"></i> Giá tăng dần
+                                        <i class="fas fa-sort-amount-up"></i> Price up
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item"
                                         href="{{ route('products.orderby', ['data' => 'price', 'by' => 'DESC']) }}">
-                                        <i class="fas fa-sort-amount-down"></i> Giá giảm dần
+                                        <i class="fas fa-sort-amount-down"></i> Price down
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="fas fa-calendar-plus"></i> Mới nhất
+                                    <a class="dropdown-item"
+                                        href="{{ route('products.orderby', ['data' => 'created_at', 'by' => 'DESC']) }}">
+                                        <i class="fas fa-calendar-plus"></i> Latest
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="fas fa-calendar-minus"></i> Cũ nhất
+                                    <a class="dropdown-item"
+                                        href="{{ route('products.orderby', ['data' => 'created_at', 'by' => 'ASC']) }}">
+                                        <i class="fas fa-calendar-minus"></i> Oldest
                                     </a>
                                 </li>
                             </ul>

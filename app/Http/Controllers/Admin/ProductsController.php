@@ -64,8 +64,7 @@ class ProductsController extends Controller
             ]);
 
 
-            return redirect()->route('products.index')
-                ->with('success', 'Sản phẩm đã được thêm thành công');
+            return redirect()->route('products.edit', $product->id);
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());
@@ -83,9 +82,14 @@ class ProductsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(string $id)
     {
-        //
+        $colors = Color::all();
+        $storages = Storage::all();
+        $categories = Category::all();
+        $product = Product::findOrFail($id);
+        return view('admin.products.edit', compact('colors', 'storages', 'categories', 'product'));
+
     }
 
     /**
@@ -99,9 +103,11 @@ class ProductsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $product->delete();
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
 
     public function orderBy(Request $request)
@@ -114,5 +120,24 @@ class ProductsController extends Controller
             ->paginate(20);
         return view('admin.products.index', compact('products'));
 
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        if (empty($query)) {
+            return response()->json([]);
+        }
+
+        $products = Product::
+            with('category')
+            ->withCount('variants')
+            ->where('name', 'like', "%$query%")
+            ->orWhereHas('category', function ($q) use ($query) {
+                $q->where('name', 'like', "%$query%");
+            })
+            ->get();
+        return response()->json($products);
     }
 }
