@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard admin') }}
@@ -38,7 +38,7 @@
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->role }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-dark"
+                                        <button type="button" class="btn btn-dark btn-sm"
                                             onclick="openModal('{{ $user->id }}','{{ $user->role === 'admin' ? 'user' : 'admin' }}')">
                                             {{ $user->role === 'admin' ? 'Xóa quyền' : 'Cấp quyền' }}
                                         </button>
@@ -154,4 +154,4 @@
             }, 300);
         });
     </script>
-</x-app-layout>
+</x-admin-layout>
