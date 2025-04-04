@@ -9,6 +9,7 @@ use App\Models\Color;
 use App\Models\Variant;
 use App\Models\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProductsController extends Controller
 {
@@ -19,7 +20,7 @@ class ProductsController extends Controller
     {
         $products = Product::with('category')
             ->withCount('variants')
-            ->paginate(20);
+            ->paginate(10)->appends(request()->query());
         return view('admin.products.index', compact('products'));
     }
 
@@ -45,9 +46,14 @@ class ProductsController extends Controller
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'price' => 'required|numeric',
-                'category_id' => 'required',
-                'image' => 'nullable|image',
+                'category_id' => 'required|exists:categories,id',
+                'image' => 'nullable|image|max:2048',
                 'description' => 'required|string',
+                'variants' => 'required|array|min:1',
+                'variants.*.price' => 'required|numeric',
+                'variants.*.quantity' => 'required|integer|min:0',
+                'variants.*.color_id' => 'nullable|exists:colors,id',
+                'variants.*.storage_id' => 'nullable|exists:storages,id'
             ]);
 
             $imagePath = null;
@@ -56,18 +62,30 @@ class ProductsController extends Controller
             }
 
             $product = Product::create([
-                'name' => $request->name,
-                'price' => $request->price,
-                'category_id' => $request->category_id,
+                'name' => $validated['name'],
+                'price' => $validated['price'],
+                'category_id' => $validated['category_id'],
                 'image' => $imagePath,
-                'description' => $request->description
+                'description' => $validated['description']
             ]);
 
+            foreach ($request->variants as $variant) {
+                $product->variants()->create([
+                    'price' => $variant['price'],
+                    'quantity' => $variant['quantity'],
+                    'color_id' => $variant['color_id'],
+                    'storage_id' => $variant['storage_id']
+                ]);
+            }
 
-            return redirect()->route('products.edit', $product->id);
+            return redirect()->route('products.index')
+                ->with('success', 'Thêm sản phẩm thành công!');
+
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());
+            log::error('Lỗi khi thêm sản phẩm: ' . $e->getMessage());
+
+            return back()->withInput()
+                ->with('error', 'Có lỗi xảy ra khi thêm sản phẩm: ' . $e->getMessage());
         }
     }
 
@@ -87,7 +105,8 @@ class ProductsController extends Controller
         $colors = Color::all();
         $storages = Storage::all();
         $categories = Category::all();
-        $product = Product::findOrFail($id);
+        $product = Product::with('variants')
+            ->findOrFail($id);
         return view('admin.products.edit', compact('colors', 'storages', 'categories', 'product'));
 
     }
@@ -95,9 +114,61 @@ class ProductsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'price' => 'required|numeric',
+                'category_id' => 'required|exists:categories,id',
+                'image' => 'nullable|image|max:2048',
+                'description' => 'required|string',
+                'variants' => 'required|array|min:1',
+                'variants.*.price' => 'required|numeric',
+                'variants.*.quantity' => 'required|integer|min:0',
+                'variants.*.color_id' => 'nullable|exists:colors,id',
+                'variants.*.storage_id' => 'nullable|exists:storages,id'
+            ]);
+
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('products', 'public');
+            } else {
+                $imagePath = $product->image;
+            }
+
+            $product->update([
+                'name' => $validated['name'],
+                'price' => $validated['price'],
+                'category_id' => $validated['category_id'],
+                'image' => $imagePath,
+                'description' => $validated['description']
+            ]);
+
+            foreach ($product->variants as $variant) {
+                if (!in_array($variant->id, array_column($validated['variants'], 'id'))) {
+                    $variant->delete();
+                }
+            }
+
+            foreach ($validated['variants'] as $variantData) {
+                if (isset($variantData['id'])) {
+                    // Cập nhật biến thể
+                    $variant = Variant::findOrFail($variantData['id']);
+                    $variant->update($variantData);
+                } else {
+                    // Thêm mới biến thể
+                    $product->variants()->create($variantData);
+                }
+            }
+
+            return redirect()->back()
+                ->with('success', 'Cập nhật sản phẩm thành công!');
+        } catch (\Exception $e) {
+            log::error('Lỗi khi cập nhật sản phẩm: ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'Có lỗi xảy ra khi cập nhật sản phẩm: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -107,7 +178,7 @@ class ProductsController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->delete();
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
+        return redirect()->to(url()->previous())->with('success', 'Product deleted successfully.');
     }
 
     public function orderBy(Request $request)
@@ -117,7 +188,7 @@ class ProductsController extends Controller
         $products = Product::with('category')
             ->orderBy("$data", "$by")
             ->withCount('variants')
-            ->paginate(20);
+            ->paginate(20)->appends($request->query());
         return view('admin.products.index', compact('products'));
 
     }
@@ -139,5 +210,24 @@ class ProductsController extends Controller
             })
             ->get();
         return response()->json($products);
+    }
+
+    public function destroy_variant($id)
+    {
+        try {
+            $variant = Variant::findOrFail($id);
+            $variant->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Biến thể đã được xóa thành công!'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xóa biến thể thất bại: ' . $e->getMessage()
+            ], 500); // Status code 500 cho lỗi server
+        }
     }
 }

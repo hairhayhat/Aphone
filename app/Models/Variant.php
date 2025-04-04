@@ -1,12 +1,13 @@
 <?php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Variant extends Model
 {
+    use HasFactory;
 
-    protected $table = 'product_variants';
     protected $fillable = ['product_id', 'price', 'quantity', 'color_id', 'storage_id'];
     public function color()
     {
@@ -16,5 +17,9 @@ class Variant extends Model
     public function storage()
     {
         return $this->belongsTo(Storage::class);
+    }
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
     }
 }

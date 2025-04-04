@@ -101,57 +101,10 @@
                             </div>
                         </div>
 
-                        {{-- <div class="mb-4 border-top pt-4">
+                        <div class="mb-4 border-top pt-4">
                             <h4 class="fw-bold mb-3">Biến thể sản phẩm</h4>
 
                             <div id="variants-container">
-                                <!-- Biến thể mẫu (ẩn) -->
-                                <div id="variant-template" class="d-none">
-                                    <div class="variant-item border p-3 mb-3">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h5 class="mb-0">Biến thể #<span class="variant-number">1</span></h5>
-                                            <button type="button" class="btn btn-sm btn-outline-danger remove-variant">
-                                                <i class="bi bi-trash"></i> Xóa
-                                            </button>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4 mb-2">
-                                                <label>Giá</label>
-                                                <input type="number" name="variants[__INDEX__][price]"
-                                                    class="form-control" required>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <label>Số lượng</label>
-                                                <input type="number" name="variants[__INDEX__][quantity]"
-                                                    class="form-control" required>
-                                            </div>
-                                            <div class="col-md-6 mb-2">
-                                                <label>Màu sắc</label>
-                                                <select name="variants[__INDEX__][color_id]" class="form-select"
-                                                    required>
-                                                    <option value="">Chọn màu</option>
-                                                    @foreach ($colors as $color)
-                                                        <option value="{{ $color->id }}">{{ $color->color }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6 mb-2">
-                                                <label>Dung lượng</label>
-                                                <select name="variants[__INDEX__][storage_id]" class="form-select"
-                                                    required>
-                                                    <option value="">Chọn dung lượng</option>
-                                                    @foreach ($storages as $storage)
-                                                        <option value="{{ $storage->id }}">{{ $storage->storage }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Biến thể đầu tiên -->
                                 <div class="variant-item border p-3 mb-3">
                                     <div class="row">
                                         <div class="col-md-4 mb-2">
@@ -190,7 +143,7 @@
                             <button type="button" id="add-variant" class="btn btn-outline-primary mt-2">
                                 <i class="bi bi-plus-circle me-1"></i> Thêm biến thể
                             </button>
-                        </div> --}}
+                        </div>
 
                         <div class="row">
                             <div class="col-sm-8 offset-sm-4 d-flex gap-3">
@@ -203,6 +156,49 @@
                             </div>
                         </div>
                     </form>
+                    <div id="variant-template" class="d-none">
+                        <div class="variant-item border p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0">Biến thể #<span class="variant-number">1</span></h5>
+                                <button type="button" class="btn btn-sm btn-outline-danger remove-variant">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </button>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <label>Giá</label>
+                                    <input type="number" name="variants[__INDEX__][price]" class="form-control"
+                                        required>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label>Số lượng</label>
+                                    <input type="number" name="variants[__INDEX__][quantity]" class="form-control"
+                                        required>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label>Màu sắc</label>
+                                    <select name="variants[__INDEX__][color_id]" class="form-select" required>
+                                        <option value="">Chọn màu</option>
+                                        @foreach ($colors as $color)
+                                            <option value="{{ $color->id }}">{{ $color->color }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label>Dung lượng</label>
+                                    <select name="variants[__INDEX__][storage_id]" class="form-select" required>
+                                        <option value="">Chọn dung lượng</option>
+                                        @foreach ($storages as $storage)
+                                            <option value="{{ $storage->id }}">{{ $storage->storage }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

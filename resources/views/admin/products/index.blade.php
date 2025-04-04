@@ -126,6 +126,13 @@
                                 </tr>
                             @endforeach
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    {{ $products->links() }}
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 

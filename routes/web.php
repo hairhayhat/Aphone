@@ -44,6 +44,8 @@ Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
         Route::delete('/{product}', [ProductsController::class, 'destroy'])->name('products.destroy');
         Route::get('/search', [ProductsController::class, 'search'])->name('products.search');
         Route::get('/orderby', [ProductsController::class, 'orderBy'])->name('products.orderby');
+        Route::delete('products/variants/{id}', [ProductsController::class, 'destroy_variant'])
+            ->name('products.destroy_variant');
     });
 });
 

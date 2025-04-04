@@ -24,9 +24,10 @@
                 </div>
 
                 <div class="table-responsive p-3">
-                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data"
-                        novalidate>
+                    <form action="{{ route('products.update', $product->id) }}" method="POST"
+                        enctype="multipart/form-data" class="needs-validation" novalidate>
                         @csrf
+                        @method('PATCH')
 
                         <!-- Thông tin cơ bản -->
                         <div class="mb-4 row">
@@ -111,96 +112,63 @@
                             </div>
                         </div>
 
-                        {{-- <div class="mb-4 border-top pt-4">
+                        <div class="mb-4 border-top pt-4">
                             <h4 class="fw-bold mb-3">Biến thể sản phẩm</h4>
 
                             <div id="variants-container">
-                                <!-- Biến thể mẫu (ẩn) -->
-                                <div id="variant-template" class="d-none">
+                                @foreach ($product->variants as $v)
                                     <div class="variant-item border p-3 mb-3">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h5 class="mb-0">Biến thể #<span class="variant-number">1</span></h5>
-                                            <button type="button" class="btn btn-sm btn-outline-danger remove-variant">
+                                            <h5 class="mb-0">Biến thể #<span
+                                                    class="variant-number">{{ $loop->iteration }}</span></h5>
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-danger delete-variant-btn"
+                                                data-url="{{ route('products.destroy_variant', $v->id) }}">
                                                 <i class="bi bi-trash"></i> Xóa
                                             </button>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <label>Giá</label>
-                                                <input type="number" name="variants[__INDEX__][price]"
-                                                    class="form-control" required>
+                                                <input type="number" name="variants[0][price]" class="form-control"
+                                                    value="{{ $v->price }}" required>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <label>Số lượng</label>
-                                                <input type="number" name="variants[__INDEX__][quantity]"
-                                                    class="form-control" required>
+                                                <input type="number" name="variants[0][quantity]" class="form-control"
+                                                    value="{{ $v->quantity }}" required>
                                             </div>
                                             <div class="col-md-6 mb-2">
                                                 <label>Màu sắc</label>
-                                                <select name="variants[__INDEX__][color_id]" class="form-select"
-                                                    required>
+                                                <select name="variants[{{ $loop->index }}][color_id]" class="form-select" required>
                                                     <option value="">Chọn màu</option>
                                                     @foreach ($colors as $color)
-                                                        <option value="{{ $color->id }}">{{ $color->color }}
+                                                        <option value="{{ $color->id }}" {{ $v->color_id == $color->id ? 'selected' : '' }}>
+                                                            {{ $color->color }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-6 mb-2">
                                                 <label>Dung lượng</label>
-                                                <select name="variants[__INDEX__][storage_id]" class="form-select"
-                                                    required>
+                                                <select name="variants[{{ $loop->index }}][storage_id]" class="form-select" required>
                                                     <option value="">Chọn dung lượng</option>
                                                     @foreach ($storages as $storage)
-                                                        <option value="{{ $storage->id }}">{{ $storage->storage }}
+                                                        <option value="{{ $storage->id }}" {{ $v->storage_id == $storage->id ? 'selected' : '' }}>
+                                                            {{ $storage->storage }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <!-- Biến thể đầu tiên -->
-                                <div class="variant-item border p-3 mb-3">
-                                    <div class="row">
-                                        <div class="col-md-4 mb-2">
-                                            <label>Giá</label>
-                                            <input type="number" name="variants[0][price]" class="form-control"
-                                                required>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <label>Số lượng</label>
-                                            <input type="number" name="variants[0][quantity]" class="form-control"
-                                                required>
-                                        </div>
-                                        <div class="col-md-6 mb-2">
-                                            <label>Màu sắc</label>
-                                            <select name="variants[0][color_id]" class="form-select" required>
-                                                <option value="">Chọn màu</option>
-                                                @foreach ($colors as $color)
-                                                    <option value="{{ $color->id }}">{{ $color->color }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 mb-2">
-                                            <label>Dung lượng</label>
-                                            <select name="variants[0][storage_id]" class="form-select" required>
-                                                <option value="">Chọn dung lượng</option>
-                                                @foreach ($storages as $storage)
-                                                    <option value="{{ $storage->id }}">{{ $storage->storage }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
 
                             <button type="button" id="add-variant" class="btn btn-outline-primary mt-2">
                                 <i class="bi bi-plus-circle me-1"></i> Thêm biến thể
                             </button>
-                        </div> --}}
+                        </div>
 
                         <div class="row">
                             <div class="col-sm-8 offset-sm-4 d-flex gap-3">
@@ -213,6 +181,48 @@
                             </div>
                         </div>
                     </form>
+                    <div id="variant-template" class="d-none">
+                        <div class="variant-item border p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0">Biến thể #<span class="variant-number">1</span></h5>
+                                <button type="button" class="btn btn-sm btn-outline-danger remove-variant">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </button>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <label>Giá</label>
+                                    <input type="number" name="variants[__INDEX__][price]" class="form-control"
+                                        required>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label>Số lượng</label>
+                                    <input type="number" name="variants[__INDEX__][quantity]" class="form-control"
+                                        required>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label>Màu sắc</label>
+                                    <select name="variants[__INDEX__][color_id]" class="form-select" required>
+                                        <option value="">Chọn màu</option>
+                                        @foreach ($colors as $color)
+                                            <option value="{{ $color->id }}">{{ $color->color }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label>Dung lượng</label>
+                                    <select name="variants[__INDEX__][storage_id]" class="form-select" required>
+                                        <option value="">Chọn dung lượng</option>
+                                        @foreach ($storages as $storage)
+                                            <option value="{{ $storage->id }}">{{ $storage->storage }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -225,18 +235,20 @@
             const addVariantBtn = document.getElementById('add-variant');
 
             // Thêm biến thể mới
-            addVariantBtn.addEventListener('click', function() {
-                const currentCount = variantsContainer.querySelectorAll('.variant-item').length;
-                const newVariant = variantTemplate.innerHTML
-                    .replace(/__INDEX__/g, currentCount)
-                    .replace(/d-none/g, '');
+            if (addVariantBtn) {
+                addVariantBtn.addEventListener('click', function() {
+                    const currentCount = variantsContainer.querySelectorAll('.variant-item').length;
+                    const newVariant = variantTemplate.innerHTML
+                        .replace(/__INDEX__/g, currentCount)
+                        .replace(/d-none/g, '');
 
-                const div = document.createElement('div');
-                div.innerHTML = newVariant;
-                variantsContainer.appendChild(div.firstElementChild);
+                    const div = document.createElement('div');
+                    div.innerHTML = newVariant;
+                    variantsContainer.appendChild(div.firstElementChild);
 
-                updateVariantNumbers();
-            });
+                    updateVariantNumbers();
+                });
+            }
 
             // Xử lý xóa biến thể
             variantsContainer.addEventListener('click', function(e) {
@@ -270,17 +282,67 @@
                 });
             }
 
-            // Validation form
-            const form = document.querySelector('form.needs-validation');
-            if (form) {
-                form.addEventListener('submit', function(event) {
-                    if (!form.checkValidity()) {
+            const mainForm = document.querySelector('form.needs-validation');
+            if (mainForm) {
+                mainForm.addEventListener('submit', function(event) {
+                    // Bỏ qua nếu là submit từ form xóa
+                    if (event.submitter && event.submitter.closest('.delete_variant_form')) {
+                        return;
+                    }
+
+                    if (!this.checkValidity()) {
                         event.preventDefault();
                         event.stopPropagation();
                     }
-                    form.classList.add('was-validated');
+                    this.classList.add('was-validated');
                 }, false);
             }
+
+        });
+        document.querySelectorAll('.delete-variant-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                if (!confirm('Bạn chắc chắn muốn xóa biến thể này?')) {
+                    return;
+                }
+
+                const variantItem = this.closest('.variant-item');
+                const deleteUrl = this.dataset.url;
+
+                try {
+                    const response = await fetch(deleteUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Lỗi khi xóa biến thể');
+                    }
+
+                    if (data.success) {
+                        // Hiệu ứng xóa mượt mà
+                        variantItem.style.transition = 'all 0.3s';
+                        variantItem.style.opacity = '0';
+                        setTimeout(() => {
+                            variantItem.remove();
+                            updateVariantNumbers();
+                        }, 300);
+
+                        // Hiển thị thông báo thành công
+                        showToast('success', data.message);
+                    } else {
+                        throw new Error(data.message || 'Xóa không thành công');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('error', error.message);
+                }
+            });
         });
     </script>
 </x-admin-layout>
