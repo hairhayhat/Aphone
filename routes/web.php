@@ -5,11 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\ProductsController;
+use App\Http\Controllers\User\HomeController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
@@ -51,7 +49,7 @@ Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
     Route::get('/home', function () {
-        return view('user.dashboard'); // Trang dành cho user
+        return view('user.home'); // Trang dành cho user
     })->name('home');
 });
 

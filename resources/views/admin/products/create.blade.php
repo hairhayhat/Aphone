@@ -22,7 +22,6 @@
                         {{ __('Trang thêm sản phẩm') }}
                     </h2>
                 </div>
-
                 <div class="table-responsive p-3">
                     <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data"
                         novalidate>
@@ -34,7 +33,8 @@
                             <div class="col-sm-8">
                                 <input type="text"
                                     class="form-control form-control-lg @error('name') is-invalid @enderror"
-                                    name="name" id="name" placeholder="Nhập tên sản phẩm" required />
+                                    name="name" id="name" placeholder="Nhập tên sản phẩm" required
+                                    value="{{ old('name') }}" />
                                 @error('name')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -48,7 +48,8 @@
                             <div class="col-sm-8">
                                 <input type="number"
                                     class="form-control form-control-lg @error('price') is-invalid @enderror"
-                                    name="price" id="price" placeholder="Nhập giá" required />
+                                    name="price" id="price" placeholder="Nhập giá" required
+                                    value="{{ old('price') }}" />
                                 @error('price')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -62,8 +63,13 @@
                             <div class="col-sm-8">
                                 <select class="col-form-label @error('category_id') is-invalid @enderror"
                                     name="category_id" id="category_id" required>
+
                                     <option value="" selected>Chọn loại</option>
                                     @foreach ($categories as $cate)
+                                        @if (old('category_id') == $cate->id)
+                                            <option value="{{ $cate->id }}" selected>
+                                                {{ $cate->name }}</option>
+                                        @endif
                                         <option value="{{ $cate->id }}">{{ $cate->name }}</option>
                                     @endforeach
                                 </select>
@@ -92,7 +98,7 @@
                             <label for="description" class="col-sm-4 col-form-label fw-bold">Mô tả</label>
                             <div class="col-sm-8">
                                 <textarea class="form-control" name="description" id="description" placeholder="Nhập mô tả sản phẩm" required
-                                    style="height: 150px"></textarea>
+                                    style="height: 150px">{{ old('description') }}</textarea>
                                 @error('description')
                                     <div class="invalid-feedback">
                                         {{ $message }}

@@ -12,7 +12,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="container p-6">
                     <form class="needs-validation" novalidate method="post"
-                        action="{{ route('categories.update', $category->id) }}">
+                        action="{{ route('categories.update', $category->id) }}" enctype="multipart/form-data">
                         @csrf
                         @method('patch')
                         <div class="mb-4 row">
@@ -29,6 +29,26 @@
                                 @enderror
                             </div>
                         </div>
+
+                        <div class="mb-4 row">
+                            <label for="thumbnail" class="col-sm-4 col-form-label fw-bold">Thumbnail</label>
+                            <div class="col-sm-8">
+                                <input type="file" @error('thumbnail') is-invalid @enderror" name="thumbnail"
+                                    id="thumbnail" />
+                                @error('thumbnail')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                                @if ($category->thumbnail)
+                                    <div class="mt-3">
+                                        <img src="{{ Storage::url($category->thumbnail) }}" alt="Thumbnail"
+                                            class="img-thumbnail" style="max-width: 150px;">
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
 
                         <div class="mb-4 row">
                             <label for="overview" class="col-sm-4 col-form-label fw-bold">Overview</label>

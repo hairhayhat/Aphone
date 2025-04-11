@@ -11,7 +11,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="container p-6">
-                    <form class="needs-validation" novalidate method="post" action="{{ route('categories.store') }}">
+                    <form class="needs-validation" novalidate method="post" action="{{ route('categories.store') }}"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="mb-4 row">
                             <label for="name" class="col-sm-4 col-form-label fw-bold">Name</label>
@@ -20,6 +21,19 @@
                                     class="form-control form-control-lg @error('name') is-invalid @enderror"
                                     name="name" id="name" placeholder="Enter name" required />
                                 @error('name')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 row">
+                            <label for="thumbnail" class="col-sm-4 col-form-label fw-bold">Thumbnail</label>
+                            <div class="col-sm-8">
+                                <input type="file" class="@error('thumbnail') is-invalid @enderror" name="thumbnail"
+                                    id="thumbnail" required />
+                                @error('thumbnail')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>

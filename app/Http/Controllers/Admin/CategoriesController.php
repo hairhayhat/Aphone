@@ -35,7 +35,13 @@ class CategoriesController extends Controller
             'name' => 'required|string|max:255',
             'overview' => 'required|string|max:500',
             'description' => 'required|string',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        $thumbnailPath = null;
+        if ($request->hasFile('thumbnail')) {
+            $thumbnailPath = $request->file('thumbnail')->store('categories', 'public');
+            $data['thumbnail'] = $thumbnailPath ?? null;
+        }
 
         Category::create($data);
 
@@ -65,13 +71,20 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $category = Category::findOrFail($id);
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'overview' => 'required|string|max:500',
             'description' => 'required|string',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $category = Category::findOrFail($id);
+        if ($request->hasFile('thumbnail')) {
+            $data['thumbnail'] = $request->file('thumbnail')->store('categories', 'public');
+        } else {
+            $data['thumbnail'] = $category->thumbnail;
+        }
+
         $category->update($data);
 
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');

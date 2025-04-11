@@ -42,50 +42,44 @@ class ProductsController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'price' => 'required|numeric',
-                'category_id' => 'required|exists:categories,id',
-                'image' => 'nullable|image|max:2048',
-                'description' => 'required|string',
-                'variants' => 'required|array|min:1',
-                'variants.*.price' => 'required|numeric',
-                'variants.*.quantity' => 'required|integer|min:0',
-                'variants.*.color_id' => 'nullable|exists:colors,id',
-                'variants.*.storage_id' => 'nullable|exists:storages,id'
-            ]);
 
-            $imagePath = null;
-            if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('products', 'public');
-            }
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|max:2048',
+            'description' => 'required|string',
+            'variants' => 'required|array|min:1',
+            'variants.*.price' => 'required|numeric',
+            'variants.*.quantity' => 'required|integer|min:0',
+            'variants.*.color_id' => 'nullable|exists:colors,id',
+            'variants.*.storage_id' => 'nullable|exists:storages,id'
+        ]);
+        try {
+
+
+            $imagePath = $request->hasFile('image')
+                ? $request->file('image')->store('products', 'public')
+                : null;
 
             $product = Product::create([
                 'name' => $validated['name'],
                 'price' => $validated['price'],
                 'category_id' => $validated['category_id'],
                 'image' => $imagePath,
-                'description' => $validated['description']
+                'description' => $validated['description'],
+                'is_showhome' => $request->boolean('is_showhome'),
             ]);
 
-            foreach ($request->variants as $variant) {
-                $product->variants()->create([
-                    'price' => $variant['price'],
-                    'quantity' => $variant['quantity'],
-                    'color_id' => $variant['color_id'],
-                    'storage_id' => $variant['storage_id']
-                ]);
+            foreach ($validated['variants'] as $variant) {
+                $product->variants()->create($variant);
             }
 
             return redirect()->route('products.index')
                 ->with('success', 'Thêm sản phẩm thành công!');
-
         } catch (\Exception $e) {
-            log::error('Lỗi khi thêm sản phẩm: ' . $e->getMessage());
-
             return back()->withInput()
-                ->with('error', 'Có lỗi xảy ra khi thêm sản phẩm: ' . $e->getMessage());
+                ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
     }
 
@@ -116,6 +110,7 @@ class ProductsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        dd($request->all());
         $product = Product::findOrFail($id);
         try {
             $validated = $request->validate([
@@ -142,7 +137,8 @@ class ProductsController extends Controller
                 'price' => $validated['price'],
                 'category_id' => $validated['category_id'],
                 'image' => $imagePath,
-                'description' => $validated['description']
+                'description' => $validated['description'],
+                'is_showhome' => $request->has('is_showhome') ? 1 : 0,
             ]);
 
             foreach ($product->variants as $variant) {
@@ -153,11 +149,9 @@ class ProductsController extends Controller
 
             foreach ($validated['variants'] as $variantData) {
                 if (isset($variantData['id'])) {
-                    // Cập nhật biến thể
                     $variant = Variant::findOrFail($variantData['id']);
                     $variant->update($variantData);
                 } else {
-                    // Thêm mới biến thể
                     $product->variants()->create($variantData);
                 }
             }
@@ -165,9 +159,7 @@ class ProductsController extends Controller
             return redirect()->back()
                 ->with('success', 'Cập nhật sản phẩm thành công!');
         } catch (\Exception $e) {
-            log::error('Lỗi khi cập nhật sản phẩm: ' . $e->getMessage());
-            return back()->withInput()
-                ->with('error', 'Có lỗi xảy ra khi cập nhật sản phẩm: ' . $e->getMessage());
+            dd($e);
         }
     }
 

@@ -100,6 +100,29 @@
                         </div>
 
                         <div class="mb-4 row">
+                            <label for="image" class="col-sm-4 col-form-label fw-bold">Show home</label>
+                            <div class="col-sm-8">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input @error('is_showhome') is-invalid @enderror"
+                                        type="radio" name="is_showhome" id="is_showhome_yes" value="1"
+                                        {{ $product->is_showhome ? 'checked' : '' }} required>
+                                    <label class="form-check-label" for="is_showhome_yes">Có</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input @error('is_showhome') is-invalid @enderror"
+                                        type="radio" name="is_showhome" id="is_showhome_no" value="0"
+                                        {{ !$product->is_showhome ? 'checked' : '' }} required>
+                                    <label class="form-check-label" for="is_showhome_no">Không</label>
+                                </div>
+                                @error('is_showhome')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="mb-4 row">
                             <label for="description" class="col-sm-4 col-form-label fw-bold">Mô tả</label>
                             <div class="col-sm-8">
                                 <textarea class="form-control" name="description" id="description" placeholder="Nhập mô tả sản phẩm" required
@@ -135,15 +158,17 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <label>Số lượng</label>
-                                                <input type="number" name="variants[0][quantity]" class="form-control"
-                                                    value="{{ $v->quantity }}" required>
+                                                <input type="number" name="variants[0][quantity]"
+                                                    class="form-control" value="{{ $v->quantity }}" required>
                                             </div>
                                             <div class="col-md-6 mb-2">
                                                 <label>Màu sắc</label>
-                                                <select name="variants[{{ $loop->index }}][color_id]" class="form-select" required>
+                                                <select name="variants[{{ $loop->index }}][color_id]"
+                                                    class="form-select" required>
                                                     <option value="">Chọn màu</option>
                                                     @foreach ($colors as $color)
-                                                        <option value="{{ $color->id }}" {{ $v->color_id == $color->id ? 'selected' : '' }}>
+                                                        <option value="{{ $color->id }}"
+                                                            {{ $v->color_id == $color->id ? 'selected' : '' }}>
                                                             {{ $color->color }}
                                                         </option>
                                                     @endforeach
@@ -151,10 +176,12 @@
                                             </div>
                                             <div class="col-md-6 mb-2">
                                                 <label>Dung lượng</label>
-                                                <select name="variants[{{ $loop->index }}][storage_id]" class="form-select" required>
+                                                <select name="variants[{{ $loop->index }}][storage_id]"
+                                                    class="form-select" required>
                                                     <option value="">Chọn dung lượng</option>
                                                     @foreach ($storages as $storage)
-                                                        <option value="{{ $storage->id }}" {{ $v->storage_id == $storage->id ? 'selected' : '' }}>
+                                                        <option value="{{ $storage->id }}"
+                                                            {{ $v->storage_id == $storage->id ? 'selected' : '' }}>
                                                             {{ $storage->storage }}
                                                         </option>
                                                     @endforeach
