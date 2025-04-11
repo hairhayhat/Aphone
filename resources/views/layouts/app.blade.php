@@ -44,6 +44,8 @@
                 {{ $slot }}
             </div>
         </main>
+        @include('layouts.footer')
+
     </div>
 
     <!-- jQuery (phải đặt trước Bootstrap JS và Slick JS) -->

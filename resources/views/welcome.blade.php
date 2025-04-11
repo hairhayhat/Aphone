@@ -17,6 +17,96 @@
         @endforeach
     </div>
 
+    <div class="mt-4 p-4 sm:p-8 bg-white shadow overflow-hidden">
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="card flex-1">
+                <div class="card-body">
+                    <h5 class="card-title text-center text-1xl font-bold">Chúng tôi là ai?</h5>
+                    <p class="card-text text-center">Chúng tôi là một cửa hàng chuyên cung cấp các sản phẩm công nghệ
+                        chính
+                        hãng, đặc biệt là iPhone. Với cam kết mang đến cho khách hàng những sản phẩm chất lượng nhất,
+                        chúng
+                        tôi luôn nỗ lực để đáp ứng mọi nhu cầu của bạn.</p>
+                    <a href="#" class="btn btn-dark flex justify-center">Tìm hiểu thêm</a>
+                </div>
+            </div>
+            <div class="card flex-1">
+                <div class="card-body">
+                    <h5 class="card-title text-center text-1xl font-bold">Chúng tôi là ai?</h5>
+                    <p class="card-text text-center">Chúng tôi là một cửa hàng chuyên cung cấp các sản phẩm công nghệ
+                        chính
+                        hãng, đặc biệt là iPhone. Với cam kết mang đến cho khách hàng những sản phẩm chất lượng nhất,
+                        chúng
+                        tôi luôn nỗ lực để đáp ứng mọi nhu cầu của bạn.</p>
+                    <a href="#" class="btn btn-dark flex justify-center">Tìm hiểu thêm</a>
+                </div>
+            </div>
+            <div class="card flex-1">
+                <div class="card-body">
+                    <h5 class="card-title text-center text-1xl font-bold">Chúng tôi là ai?</h5>
+                    <p class="card-text text-center">Chúng tôi là một cửa hàng chuyên cung cấp các sản phẩm công nghệ
+                        chính
+                        hãng, đặc biệt là iPhone. Với cam kết mang đến cho khách hàng những sản phẩm chất lượng nhất,
+                        chúng
+                        tôi luôn nỗ lực để đáp ứng mọi nhu cầu của bạn.</p>
+                    <a href="#" class="btn btn-dark flex justify-center">Tìm hiểu thêm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 p-1 sm:p-8 bg-gray-100 overflow-hidden">
+        <div class="flex justify-between items-center space-x-4">
+            <div class="flex flex-col items-center space-y-2">
+                <a href="#"
+                    class="inline-flex items-center justify-center w-12 h-12 bg-white rounded-lg shadow hover:shadow-md transition-all">
+                    <i class="fa fa-mobile text-dark text-3xl" aria-hidden="true"></i>
+                </a>
+                <span class="text-sm font-medium text-dark">iPhone</span>
+            </div>
+            <div class="h-16 border-l border-gray-300"></div>
+            <div class="flex flex-col items-center space-y-2">
+                <a href="#"
+                    class="inline-flex items-center justify-center w-12 h-12 bg-white rounded-lg shadow hover:shadow-md transition-all">
+                    <i class="fa fa-laptop text-dark text-3xl" aria-hidden="true"></i>
+                </a>
+                <span class="text-sm font-medium text-dark">MacBook</span>
+            </div>
+            <div class="h-16 border-l border-gray-300"></div>
+            <div class="flex flex-col items-center space-y-2">
+                <a href="#"
+                    class="inline-flex items-center justify-center w-12 h-12 bg-white rounded-lg shadow hover:shadow-md transition-all">
+                    <i class="fa fa-tablet text-dark text-3xl" aria-hidden="true"></i>
+                </a>
+                <span class="text-sm font-medium text-dark">iPad</span>
+            </div>
+            <div class="h-16 border-l border-gray-300"></div>
+            <div class="flex flex-col items-center space-y-2">
+                <a href="#"
+                    class="inline-flex items-center justify-center w-12 h-12 bg-white rounded-lg shadow hover:shadow-md transition-all">
+                    <i class="fa fa-headphones text-dark text-3xl" aria-hidden="true"></i>
+                </a>
+                <span class="text-sm font-medium text-dark">AirPods</span>
+            </div>
+            <div class="h-16 border-l border-gray-300"></div>
+            <div class="flex flex-col items-center space-y-2">
+                <a href="#"
+                    class="inline-flex items-center justify-center w-12 h-12 bg-white rounded-lg shadow hover:shadow-md transition-all">
+                    <i class="fa fa-clock text-dark text-3xl" aria-hidden="true"></i>
+                </a>
+                <span class="text-sm font-medium text-dark">Apple Watch</span>
+            </div>
+            <div class="h-16 border-l border-gray-300"></div>
+            <div class="flex flex-col items-center space-y-2">
+                <a href="#"
+                    class="inline-flex items-center justify-center w-12 h-12 bg-white rounded-lg shadow hover:shadow-md transition-all">
+                    <i class="fa fa-television text-dark text-3xl" aria-hidden="true"></i>
+                </a>
+                <span class="text-sm font-medium text-dark">Apple TV</span>
+            </div>
+        </div>
+    </div>
+
     <div class="mt-6 bg-white shadow overflow-hidden">
         <div class="flex flex-col sm:flex-row">
             <div class="iphone_slick w-[70%]">
@@ -51,7 +141,7 @@
     </div>
 
     <div class="mt-4 bg-white shadow overflow-hidden">
-        <h1 class="text-2xl text-center mb-4">Sản phẩm nổi bật</h1>
+        <h1 class="text-2xl text-center mb-4 pt-4">Sản phẩm nổi bật</h1>
         <hr>
         <div class="flex flex-col md:flex-row">
             <!-- Phần 1 -->
@@ -146,12 +236,41 @@
         </div>
     </div>
 
-
-
-
-    <div class="mt-4 p-4 sm:p-8 bg-white shadow overlfow-hidden">
-        <div class="max-w-xl">
-            
+    <div class="mt-4 p-4 sm:p-8 bg-white shadow overflow-hidden">
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="card flex-1">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Chúng tôi là ai?</h5>
+                    <p class="card-text text-center">Chúng tôi là một cửa hàng chuyên cung cấp các sản phẩm công nghệ
+                        chính
+                        hãng, đặc biệt là iPhone. Với cam kết mang đến cho khách hàng những sản phẩm chất lượng nhất,
+                        chúng
+                        tôi luôn nỗ lực để đáp ứng mọi nhu cầu của bạn.</p>
+                    <a href="#" class="btn btn-dark flex justify-center">Tìm hiểu thêm</a>
+                </div>
+            </div>
+            <div class="card flex-1">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Chúng tôi là ai?</h5>
+                    <p class="card-text text-center">Chúng tôi là một cửa hàng chuyên cung cấp các sản phẩm công nghệ
+                        chính
+                        hãng, đặc biệt là iPhone. Với cam kết mang đến cho khách hàng những sản phẩm chất lượng nhất,
+                        chúng
+                        tôi luôn nỗ lực để đáp ứng mọi nhu cầu của bạn.</p>
+                    <a href="#" class="btn btn-dark flex justify-center">Tìm hiểu thêm</a>
+                </div>
+            </div>
+            <div class="card flex-1">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Chúng tôi là ai?</h5>
+                    <p class="card-text text-center">Chúng tôi là một cửa hàng chuyên cung cấp các sản phẩm công nghệ
+                        chính
+                        hãng, đặc biệt là iPhone. Với cam kết mang đến cho khách hàng những sản phẩm chất lượng nhất,
+                        chúng
+                        tôi luôn nỗ lực để đáp ứng mọi nhu cầu của bạn.</p>
+                    <a href="#" class="btn btn-dark flex justify-center">Tìm hiểu thêm</a>
+                </div>
+            </div>
         </div>
     </div>
 
