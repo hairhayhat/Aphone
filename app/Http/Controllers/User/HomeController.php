@@ -30,7 +30,15 @@ class HomeController extends Controller
             ])
             ->get();
 
-        return view('welcome', compact('categories', 'products'));
+        $productsIsSale = Product::where('is_sale', 1)
+            ->with([
+                'variants' => function ($query) {
+                    $query->with(['color', 'storage']);
+                }
+            ])
+            ->paginate(10)->appends(request()->query());
+
+        return view('user.welcome', compact('categories', 'products', 'productsIsSale'));
     }
 
 }

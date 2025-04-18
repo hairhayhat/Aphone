@@ -59,6 +59,32 @@
                         </div>
 
                         <div class="mb-4 row">
+                            <label for="is_sale" class="col-sm-4 col-form-label fw-bold">Đang giảm giá</label>
+                            <div class="col-sm-8">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="is_sale" name="is_sale"
+                                        value="1" {{ old('is_sale') ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_sale">Có</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 row">
+                            <label for="sale_price" class="col-sm-4 col-form-label fw-bold">Giá giảm (%)</label>
+                            <div class="col-sm-8">
+                                <input type="number"
+                                    class="form-control form-control-lg @error('sale_price') is-invalid @enderror"
+                                    name="sale_price" id="sale_price" placeholder="Nhập % "
+                                    value="{{ old('sale_price') }}" />
+                                @error('sale_price')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="mb-4 row">
                             <label for="category_id" class="col-sm-4 col-form-label fw-bold">Loại</label>
                             <div class="col-sm-8">
                                 <select class="col-form-label @error('category_id') is-invalid @enderror"

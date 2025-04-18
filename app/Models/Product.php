@@ -10,7 +10,7 @@ class Product extends Model
     //
     use hasFactory;
     protected $table = 'products';
-    protected $fillable = ['name', 'price', 'category_id', 'image', 'description','is_showhome'];
+    protected $fillable = ['name', 'price', 'category_id', 'image', 'description', 'is_showhome', 'is_sale', 'sale_price'];
 
     public function category()
     {
@@ -25,5 +25,14 @@ class Product extends Model
     public function gallerires()
     {
         return $this->hasMany(Gallery::class);
+    }
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites');
+    }
+
+    public function isFavoritedBy(User $user)
+    {
+        return $this->favoritedBy()->where('user_id', $user->id)->exists();
     }
 }

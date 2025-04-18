@@ -6,8 +6,9 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\ProductsController;
 use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\FavoriteController;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('welcome');
 Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
@@ -48,9 +49,9 @@ Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
-    Route::get('/home', function () {
-        return view('user.home'); // Trang dành cho user
-    })->name('home');
+    Route::get('/home',[HomeController::class, 'index'])->name('home');
+    Route::post('/products/{product}/favorite', [FavoriteController::class, 'toggleFavorite'])
+        ->name('favorite.toggle');
 });
 
 Route::middleware('auth')->group(function () {

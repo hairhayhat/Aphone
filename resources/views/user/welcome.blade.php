@@ -236,43 +236,62 @@
         </div>
     </div>
 
-    <div class="mt-4 p-4 sm:p-8 bg-white shadow overflow-hidden">
-        <div class="flex flex-col md:flex-row gap-4">
-            <div class="card flex-1">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Chúng tôi là ai?</h5>
-                    <p class="card-text text-center">Chúng tôi là một cửa hàng chuyên cung cấp các sản phẩm công nghệ
-                        chính
-                        hãng, đặc biệt là iPhone. Với cam kết mang đến cho khách hàng những sản phẩm chất lượng nhất,
-                        chúng
-                        tôi luôn nỗ lực để đáp ứng mọi nhu cầu của bạn.</p>
-                    <a href="#" class="btn btn-dark flex justify-center">Tìm hiểu thêm</a>
+    <h1 class="text-3xl font-bold text-left mt-6">Top sản phẩm đang sale</h1>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pt-4">
+        @foreach ($productsIsSale as $product)
+            <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-300 relative">
+                @if ($product->is_sale)
+                    <div class="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded-br-lg">
+                        SALE {{ $product->sale_price }}%
+                    </div>
+                @else
+                    <div
+                        class="absolute top-0 left-0 bg-dark-500 text-white px-2 py-1 text-xs font-bold rounded-br-lg">
+                        NOT SALE
+                    </div>
+                @endif
+
+                <div class="p-4 flex items-center justify-center overflow-hidden">
+                    <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}"
+                        class="w-full h-auto">
+                </div>
+
+                <div class="p-3">
+                    <h5 class="text-sm font-bold mb-1">{{ $product->name }}</h5>
+                    <div class="text-xs text-gray-500 mb-2">
+                        @foreach ($product->variants->groupBy('storage.storage') as $storage => $variants)
+                            <span>({{ $storage }})</span>
+                        @endforeach
+                    </div>
+
+                    <div class="flex items-center mb-2">
+                        @if ($product->is_sale)
+                            <span class="text-gray-500 line-through text-xs mr-2">
+                                {{ number_format($product->price, 0, '', '.') }}đ
+                            </span>
+                        @endif
+                        <span class="text-sm font-bold text-dark-500">
+                            {{ number_format($product->price - ($product->price * $product->sale_price) / 100, 0, '', '.') }}đ
+                        </span>
+                    </div>
+                    <div class="flex justify-between mt-4">
+                        @auth
+                            <div class="like-btn" data-product-id="{{ $product->id }}">
+                                <i
+                                    class="far fa-heart text-lg {{ $product->isFavoritedBy(auth()->user()) ? 'fas text-red-500' : '' }}"></i>
+                            </div>
+                        @endauth
+                        <a href="#">
+                            <i class="fa fa-eye text-dark text-1xl" aria-hidden="true"></i>
+                        </a>
+                    </div>
+
+
                 </div>
             </div>
-            <div class="card flex-1">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Chúng tôi là ai?</h5>
-                    <p class="card-text text-center">Chúng tôi là một cửa hàng chuyên cung cấp các sản phẩm công nghệ
-                        chính
-                        hãng, đặc biệt là iPhone. Với cam kết mang đến cho khách hàng những sản phẩm chất lượng nhất,
-                        chúng
-                        tôi luôn nỗ lực để đáp ứng mọi nhu cầu của bạn.</p>
-                    <a href="#" class="btn btn-dark flex justify-center">Tìm hiểu thêm</a>
-                </div>
-            </div>
-            <div class="card flex-1">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Chúng tôi là ai?</h5>
-                    <p class="card-text text-center">Chúng tôi là một cửa hàng chuyên cung cấp các sản phẩm công nghệ
-                        chính
-                        hãng, đặc biệt là iPhone. Với cam kết mang đến cho khách hàng những sản phẩm chất lượng nhất,
-                        chúng
-                        tôi luôn nỗ lực để đáp ứng mọi nhu cầu của bạn.</p>
-                    <a href="#" class="btn btn-dark flex justify-center">Tìm hiểu thêm</a>
-                </div>
-            </div>
-        </div>
+        @endforeach
     </div>
+
 
 </x-app-layout>
 
@@ -298,5 +317,26 @@
         });
 
 
+    });
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = this.getAttribute('data-product-id');
+
+            fetch(`/products/${productId}/favorite`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const icon = this.querySelector('i');
+                    icon.classList.toggle('far', !data.liked);
+                    icon.classList.toggle('fas', data.liked);
+                    icon.classList.toggle('text-red-500', data.liked);
+                });
+        });
     });
 </script>

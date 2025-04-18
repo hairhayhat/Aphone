@@ -48,6 +48,9 @@ class ProductsController extends Controller
             'price' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|max:2048',
+            'is_showhome' => 'nullable|boolean',
+            'is_sale' => 'nullable|boolean',
+            'sale_price' => 'nullable|numeric',
             'description' => 'required|string',
             'variants' => 'required|array|min:1',
             'variants.*.price' => 'required|numeric',
@@ -56,7 +59,6 @@ class ProductsController extends Controller
             'variants.*.storage_id' => 'nullable|exists:storages,id'
         ]);
         try {
-
 
             $imagePath = $request->hasFile('image')
                 ? $request->file('image')->store('products', 'public')
@@ -68,7 +70,9 @@ class ProductsController extends Controller
                 'category_id' => $validated['category_id'],
                 'image' => $imagePath,
                 'description' => $validated['description'],
-                'is_showhome' => $request->boolean('is_showhome'),
+                'is_showhome' => $validated['is_showhome'] ?? 0,
+                'is_sale' => $validated['is_sale'] ?? 0,
+                'sale_price' => $validated['sale_price'] ?? null,
             ]);
 
             foreach ($validated['variants'] as $variant) {
