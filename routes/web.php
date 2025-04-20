@@ -9,6 +9,13 @@ use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\FavoriteController;
 
 Route::get('/', [HomeController::class, 'index'])->name('welcome');
+Route::get('/categories', [HomeController::class, 'categories'])
+    ->name('categories.list');
+Route::get('/products', [HomeController::class, 'products'])
+    ->name('products.list');
+Route::get('/oderby',[HomeController::class, 'orderIndex'])
+    ->name('user.products.index');
+
 Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
@@ -49,9 +56,11 @@ Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
-    Route::get('/home',[HomeController::class, 'index'])->name('home');
-    Route::post('/products/{product}/favorite', [FavoriteController::class, 'toggleFavorite'])
-        ->name('favorite.toggle');
+    Route::prefix('user')->group(function () {
+        Route::get('/home', [HomeController::class, 'index'])->name('home');
+        Route::post('/products/{product}/favorite', [FavoriteController::class, 'toggleFavorite'])
+            ->name('favorite.toggle');
+    });
 });
 
 Route::middleware('auth')->group(function () {

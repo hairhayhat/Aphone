@@ -246,23 +246,31 @@
                     </div>
                 @else
                     <div
-                        class="absolute top-0 left-0 bg-dark-500 text-white px-2 py-1 text-xs font-bold rounded-br-lg">
-                        NOT SALE
+                        class="absolute top-0 left-0 bg-gray-800 text-white px-2 py-1 text-xs font-bold rounded-br-lg">
+                        SALE 0%
                     </div>
                 @endif
 
-                <div class="p-4 flex items-center justify-center overflow-hidden">
-                    <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}"
-                        class="w-full h-auto">
+                <div class="p-4 flex items-center justify-center overflow-hidden h-48">
+                    @if ($product->category_id == 11)
+                        <img src="{{ asset('storage/products/airpod.png') }}" alt="{{ $product->name }}"
+                            class="w-full h-full object-contain">
+                    @else
+                        <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}"
+                            class="w-full h-full object-contain">
+                    @endif
                 </div>
 
-                <div class="p-3">
-                    <h5 class="text-sm font-bold mb-1">{{ $product->name }}</h5>
-                    <div class="text-xs text-gray-500 mb-2">
-                        @foreach ($product->variants->groupBy('storage.storage') as $storage => $variants)
-                            <span>({{ $storage }})</span>
-                        @endforeach
-                    </div>
+                <div class="p-4 border-t border-gray-100">
+                    <h5 class="text-sm font-bold mb-1 truncate">{{ $product->name }}</h5>
+
+                    @if ($product->variants->count() > 1)
+                        <div class="text-xs text-gray-500 mb-2">
+                            @foreach ($product->variants->groupBy('storage.storage') as $storage => $variants)
+                                <span class="inline-block mr-2">({{ $storage }})</span>
+                            @endforeach
+                        </div>
+                    @endif
 
                     <div class="flex items-center mb-2">
                         @if ($product->is_sale)
@@ -270,23 +278,90 @@
                                 {{ number_format($product->price, 0, '', '.') }}đ
                             </span>
                         @endif
-                        <span class="text-sm font-bold text-dark-500">
+                        <span class="text-sm font-bold text-dark-600">
                             {{ number_format($product->price - ($product->price * $product->sale_price) / 100, 0, '', '.') }}đ
                         </span>
                     </div>
-                    <div class="flex justify-between mt-4">
+
+                    <div class="flex justify-between items-center mt-3">
                         @auth
-                            <div class="like-btn" data-product-id="{{ $product->id }}">
+                            <button class="like-btn text-gray-400 hover:text-red-500 transition-colors"
+                                data-product-id="{{ $product->id }}">
                                 <i
                                     class="far fa-heart text-lg {{ $product->isFavoritedBy(auth()->user()) ? 'fas text-red-500' : '' }}"></i>
-                            </div>
+                            </button>
                         @endauth
-                        <a href="#">
-                            <i class="fa fa-eye text-dark text-1xl" aria-hidden="true"></i>
+
+                        <a href="#" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="far fa-eye"></i>
                         </a>
                     </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
 
+    <h1 class="text-3xl font-bold text-left mt-6">Top sản phẩm được yêu thích nhất</h1>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pt-4">
+        @foreach ($productsPopular as $product)
+            <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-300 relative">
+                @if ($product->is_sale)
+                    <div
+                        class="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded-br-lg">
+                        SALE {{ $product->sale_price }}%
+                    </div>
+                @else
+                    <div
+                        class="absolute top-0 left-0 bg-gray-800 text-white px-2 py-1 text-xs font-bold rounded-br-lg">
+                        SALE 0%
+                    </div>
+                @endif
 
+                <div class="p-4 flex items-center justify-center overflow-hidden h-48">
+                    @if ($product->category_id == 11)
+                        <img src="{{ asset('storage/products/airpod.png') }}" alt="{{ $product->name }}"
+                            class="w-full h-full object-contain">
+                    @else
+                        <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}"
+                            class="w-full h-full object-contain">
+                    @endif
+                </div>
+
+                <div class="p-4 border-t border-gray-100">
+                    <h5 class="text-sm font-bold mb-1 truncate">{{ $product->name }}</h5>
+
+                    @if ($product->variants->count() > 1)
+                        <div class="text-xs text-gray-500 mb-2">
+                            @foreach ($product->variants->groupBy('storage.storage') as $storage => $variants)
+                                <span class="inline-block mr-2">({{ $storage }})</span>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <div class="flex items-center mb-2">
+                        @if ($product->is_sale)
+                            <span class="text-gray-500 line-through text-xs mr-2">
+                                {{ number_format($product->price, 0, '', '.') }}đ
+                            </span>
+                        @endif
+                        <span class="text-sm font-bold text-dark-600">
+                            {{ number_format($product->price - ($product->price * $product->sale_price) / 100, 0, '', '.') }}đ
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between items-center mt-3">
+                        @auth
+                            <button class="like-btn text-gray-400 hover:text-red-500 transition-colors"
+                                data-product-id="{{ $product->id }}">
+                                <i
+                                    class="far fa-heart text-lg {{ $product->isFavoritedBy(auth()->user()) ? 'fas text-red-500' : '' }}"></i>
+                            </button>
+                        @endauth
+
+                        <a href="#" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="far fa-eye"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         @endforeach
@@ -336,6 +411,7 @@
                     icon.classList.toggle('far', !data.liked);
                     icon.classList.toggle('fas', data.liked);
                     icon.classList.toggle('text-red-500', data.liked);
+
                 });
         });
     });

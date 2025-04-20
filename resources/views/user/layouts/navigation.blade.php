@@ -11,13 +11,13 @@
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex h-f">
-                    <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
+                    <x-nav-link :href="auth()->check() ? route('home') : route('welcome')" :active="request()->routeIs('home')">
                         {{ __('Home') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.index')">
+                    <x-nav-link :href="route('categories.list')" :active="request()->routeIs('categories.list')">
                         {{ __('Categories') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('products.index')" :active="request()->routeIs(['products.index', 'products.create', 'products.edit'])">
+                    <x-nav-link :href="route('products.list')" :active="request()->routeIs(['products.list', 'products.create', 'products.edit'])">
                         {{ __('Products') }}
                     </x-nav-link>
                     <x-nav-link :href="route('user.index')" :active="request()->routeIs('user.index')">
