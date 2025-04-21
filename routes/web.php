@@ -7,14 +7,17 @@ use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\ProductsController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\FavoriteController;
+use App\Http\Controllers\User\OrdersController;
 
 Route::get('/', [HomeController::class, 'index'])->name('welcome');
 Route::get('/categories', [HomeController::class, 'categories'])
     ->name('categories.list');
 Route::get('/products', [HomeController::class, 'products'])
     ->name('products.list');
-Route::get('/oderby',[HomeController::class, 'orderIndex'])
+Route::get('/oderby', [HomeController::class, 'orderIndex'])
     ->name('user.products.index');
+Route::get('/products/{product}', [HomeController::class, 'detail'])
+    ->name('user.products.detail');
 
 Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
@@ -60,6 +63,13 @@ Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
         Route::get('/home', [HomeController::class, 'index'])->name('home');
         Route::post('/products/{product}/favorite', [FavoriteController::class, 'toggleFavorite'])
             ->name('favorite.toggle');
+        Route::prefix('orders')->group(function () {
+            Route::post('/create', [OrdersController::class, 'create'])->name('orders.create');
+            Route::post('/', [OrdersController::class, 'store'])->name('orders.store');
+            Route::get('/success', function () {
+                return view('user.orders.success');
+            })->name('orders.success');
+        });
     });
 });
 

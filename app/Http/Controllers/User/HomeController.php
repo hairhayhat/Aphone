@@ -8,7 +8,6 @@ use App\Models\Category;
 use App\Models\Product;
 
 
-
 class HomeController extends Controller
 {
     public function index()
@@ -71,21 +70,41 @@ class HomeController extends Controller
                 $query->with(['color', 'storage']);
             }
         ])
-            ->get();
+            ->paginate(15);
         $categories = Category::get();
         return view('user.products.index', compact('products', 'categories'));
+    }
+
+    public function detail($id)
+    {
+        $product = Product::with([
+            'variants' => function ($query) {
+                $query->with(['color', 'storage']);
+            }
+        ])->findOrFail($id);
+        $relatedProducts = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->with([
+                'variants' => function ($query) {
+                    $query->with(['color', 'storage']);
+                }
+            ])
+            ->paginate(10);
+
+        return view('user.products.detail', compact('product', 'relatedProducts'));
     }
 
     public function orderIndex(Request $request)
     {
         $products = Product::query()
+            ->withCount('favoritedBy')
             ->when($request->category, fn($q) => $q->where('category_id', $request->category))
             ->when($request->price, function ($q) use ($request) {
                 $range = explode('-', $request->price);
                 if (count($range) == 2) {
                     $q->whereBetween('price', [$range[0], $range[1]]);
                 } else {
-                    $q->where('price', '>=', str_replace('-', '', $range[0]));
+                    $q->where('price', '>', str_replace('-', '', $range[0]));
                 }
             })
             ->when($request->sale, fn($q) => $q->where('is_sale', true))
@@ -103,14 +122,23 @@ class HomeController extends Controller
                     case 'newest':
                         return $q->latest();
                     case 'popular':
-                        return $q->withCount('orders')->orderByDesc('orders_count');
+                        return $q->orderByDesc('orders_count');
+                    case 'most_favorite':
+                        return $q->orderByDesc('favorites_count');
+                    default:
+                        return $q->latest();
                 }
+            }, function ($q) {
+                return $q->latest();
             })
-            ->paginate(12);
+
+            ->paginate(15)->withQueryString();
+
         $categories = Category::get();
-        $storages = Storage::all();
+        $storages = Storage::get();
 
         return view('user.products.index', compact('products', 'categories', 'storages'));
     }
+
 
 }

@@ -55,11 +55,11 @@
         </div>
     </div>
 
-    <div class="mt-4 p-1 sm:p-8 bg-gray-100 overflow-hidden">
+    <div class="mt-4 p-1 ">
         <div class="flex justify-between items-center space-x-4">
             <div class="flex flex-col items-center space-y-2">
                 <a href="#"
-                    class="inline-flex items-center justify-center w-12 h-12 bg-white rounded-lg shadow hover:shadow-md transition-all">
+                    class="inline-flex items-center justify-center w-12 h-12 rounded-lg shadow hover:shadow-md transition-all">
                     <i class="fa fa-mobile text-dark text-3xl" aria-hidden="true"></i>
                 </a>
                 <span class="text-sm font-medium text-dark">iPhone</span>
@@ -306,8 +306,7 @@
         @foreach ($productsPopular as $product)
             <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-300 relative">
                 @if ($product->is_sale)
-                    <div
-                        class="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded-br-lg">
+                    <div class="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded-br-lg">
                         SALE {{ $product->sale_price }}%
                     </div>
                 @else
@@ -392,27 +391,5 @@
         });
 
 
-    });
-    document.querySelectorAll('.like-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const productId = this.getAttribute('data-product-id');
-
-            fetch(`/products/${productId}/favorite`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const icon = this.querySelector('i');
-                    icon.classList.toggle('far', !data.liked);
-                    icon.classList.toggle('fas', data.liked);
-                    icon.classList.toggle('text-red-500', data.liked);
-
-                });
-        });
     });
 </script>
