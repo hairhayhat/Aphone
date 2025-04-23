@@ -83,6 +83,47 @@
             </div>
         </div>
     </div>
+    <div class="mt-8 bg-white shadow overflow-hidden p-6">
+        <h2 class="text-xl font-bold mb-4">Bình luận</h2>
+        @if ($comments)
+            <div class="space-y-4">
+                @foreach ($comments as $comment)
+                    <div class="border-b pb-4 mb-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-3">
+                                    <span class="text-gray-600">{{ substr($comment->user->name, 0, 1) }}</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium">{{ $comment->user->name }}</p>
+                                    <div class="flex items-center text-yellow-400">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= $comment->rating)
+                                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                                                </svg>
+                                            @else
+                                                <svg class="w-4 h-4 fill-current text-gray-300" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                                                </svg>
+                                            @endif
+                                        @endfor
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-gray-500 text-sm">{{ $comment->created_at->diffForHumans() }}</span>
+                        </div>
+                        <p class="mt-2 text-gray-700">{{ $comment->content }}</p>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p class="text-gray-500">Chưa có đánh giá nào cho sản phẩm này.</p>
+        @endif
+    </div>
 
     <h1 class="text-2xl pt-4">Các sản phẩm liên quan</h1>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pt-4">
@@ -147,6 +188,8 @@
                 </div>
             </div>
         @endforeach
+
+
 
     </div>
     @if ($relatedProducts->hasPages())

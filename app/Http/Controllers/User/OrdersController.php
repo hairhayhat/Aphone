@@ -14,8 +14,76 @@ class OrdersController extends Controller
 
     public function index()
     {
+        $userId = auth()->id();
 
+        $orders = Order::with('user', 'items')
+            ->where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('status', 'pending');
+            })
+            ->paginate(10);
+
+        $totalPendingOrders = Order::where('user_id', $userId)->where('status', 'pending')->count();
+        $totalProcessingOrders = Order::where('user_id', $userId)->where('status', 'processing')->count();
+        $totalShippedOrders = Order::where('user_id', $userId)->where('status', 'shipped')->count();
+        $totalDeliveredOrders = Order::where('user_id', $userId)->where('status', 'delivered')->count();
+        $totalCancelledOrders = Order::where('user_id', $userId)->where('status', 'cancelled')->count();
+
+        return view(
+            'user.orders.index',
+            compact(
+                'orders',
+                'totalPendingOrders',
+                'totalProcessingOrders',
+                'totalShippedOrders',
+                'totalDeliveredOrders',
+                'totalCancelledOrders',
+            )
+        );
     }
+
+    public function orderIndex(Request $request)
+    {
+        $userId = auth()->id();
+        $orders = Order::query()
+            ->where('user_id', $userId)
+            ->when($request->has('status'), function ($q) use ($request) {
+                $q->where('status', $request->input('status'));
+            })
+            ->when($request->has('sort'), function ($q) use ($request) {
+                switch ($request->input('sort')) {
+                    case 'newest':
+                        return $q->latest();
+                    case 'oldest':
+                        return $q->oldest();
+                    default:
+                        return $q->latest();
+                }
+            }, function ($q) {
+                return $q->latest();
+            })
+            ->paginate(10);
+
+        $totalPendingOrders = Order::where('user_id', $userId)->where('status', 'pending')->count();
+        $totalProcessingOrders = Order::where('user_id', $userId)->where('status', 'processing')->count();
+        $totalShippedOrders = Order::where('user_id', $userId)->where('status', 'shipped')->count();
+        $totalDeliveredOrders = Order::where('user_id', $userId)->where('status', 'delivered')->count();
+        $totalCancelledOrders = Order::where('user_id', $userId)->where('status', 'cancelled')->count();
+
+
+        return view(
+            'user.orders.index',
+            compact(
+                'orders',
+                'totalPendingOrders',
+                'totalProcessingOrders',
+                'totalShippedOrders',
+                'totalDeliveredOrders',
+                'totalCancelledOrders',
+            )
+        );
+    }
+
 
     public function create(Request $request)
     {
@@ -103,6 +171,42 @@ class OrdersController extends Controller
 
 
         return back()->with('error', 'Có lỗi xảy ra khi đặt hàng');
+    }
+
+    public function cancelOrder(string $id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->status === 'cancelled') {
+            return redirect()->route('user.orders.index')
+                ->with('error', 'Đơn hàng đã được hủy trước đó.');
+        }
+
+        $order->update([
+            'status' => 'cancelled',
+            'payment_status' => 'failed',
+        ]);
+
+        return redirect()->route('user.orders.index')
+            ->with('success', 'Hủy đơn hàng thành công!');
+    }
+
+    public function confirmOrder(string $id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->status === 'delivered') {
+            return redirect()->route('user.orders.index')
+                ->with('error', 'Đơn hàng đã được xác nhận trước đó.');
+        }
+
+        $order->update([
+            'status' => 'delivered',
+            'payment_status' => 'paid',
+            'delivered_at' => now(), // Thêm trường này nếu có
+        ]);
+
+        return redirect()->route('user.orders.success-confirm', ['order' => $order->id]);
     }
 
 

@@ -33,15 +33,27 @@
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
-                <div class="input-group flex-grow-1" style="max-width: 600px;">
-                    <span class="input-group-text rounded-start-3 bg-white border border-gray-300 border-end-0">
-                        <i class="fas fa-search text-gray-500"></i>
-                    </span>
-                    <input type="text" id="searchInput" placeholder="Search..."
-                        class="form-control rounded-end-3 border border-gray-300 border-start-0 py-2 px-3 hover:border-gray-400 focus:border-gray-500 focus:ring-1 focus:ring-gray-200">
-                </div>
+
+                <form action="{{ route('user.products.search') }}" method="GET" class="flex-grow-1"
+                    style="max-width: 600px;">
+                    <div class="input-group">
+                        <span class="input-group-text rounded-start-3 bg-white border border-gray-300 border-end-0">
+                            <i class="fas fa-search text-gray-500"></i>
+                        </span>
+                        <input type="text" name="q" placeholder="Tìm kiếm sản phẩm..."
+                            class="form-control rounded-end-3 border border-gray-300 border-start-0 py-2 px-3 hover:border-gray-400 focus:border-gray-500 focus:ring-1 focus:ring-gray-200">
+                        <button type="submit" class="btn btn-dark ms-2">Tìm kiếm</button>
+                    </div>
+                </form>
                 @auth
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
+                        <a href="#"
+                            class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">
+
+                            </span>
+                        </a>
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
                                 <button

@@ -5,9 +5,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\ProductsController;
+use App\Http\Controllers\Admin\OrdersController as AdminOrdersController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\FavoriteController;
 use App\Http\Controllers\User\OrdersController;
+use App\Http\Controllers\User\CommentController;
+use App\Models\Order;
+
+
 
 Route::get('/', [HomeController::class, 'index'])->name('welcome');
 Route::get('/categories', [HomeController::class, 'categories'])
@@ -18,6 +23,8 @@ Route::get('/oderby', [HomeController::class, 'orderIndex'])
     ->name('user.products.index');
 Route::get('/products/{product}', [HomeController::class, 'detail'])
     ->name('user.products.detail');
+Route::get('/search/products', [HomeController::class, 'search'])->name('user.products.search');
+
 
 Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
@@ -56,6 +63,19 @@ Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
         Route::delete('products/variants/{id}', [ProductsController::class, 'destroy_variant'])
             ->name('products.destroy_variant');
     });
+    Route::prefix('admin/orders')->group(function () {
+        Route::get('/', [AdminOrdersController::class, 'index'])->name('orders.index');
+        Route::get('/orderby', [AdminOrdersController::class, 'orderIndex'])->name('orders.orderIndex');
+        Route::patch('/{order}/change-status', [AdminOrdersController::class, 'changeStatus'])
+            ->name('orders.changeStatus');
+    });
+    Route::prefix('admin/comments')->group(function () {
+        Route::get('/{comment}/showComment', [AdminOrdersController::class, 'showComment'])->name('admin.comments.showComment');
+        Route::patch('/{comment}/approve', [AdminOrdersController::class, 'approveComment'])
+            ->name('admin.comments.approve');
+        Route::patch('/{comment}/reject', [AdminOrdersController::class, 'rejectComment'])
+            ->name('admin.comments.reject');
+    });
 });
 
 Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
@@ -69,6 +89,22 @@ Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
             Route::get('/success', function () {
                 return view('user.orders.success');
             })->name('orders.success');
+            Route::get('/', [OrdersController::class, 'index'])->name('user.orders.index');
+            Route::get('/orderby', [OrdersController::class, 'orderIndex'])->name('user.orders.orderIndex');
+            Route::get('/{order}', [OrdersController::class, 'show'])->name('user.orders.show');
+            Route::patch('/{order}/cancel', [OrdersController::class, 'cancelOrder'])->name('user.orders.cancel');
+            Route::patch('/{order}/confirm', [OrdersController::class, 'confirmOrder'])->name('user.orders.confirm');
+            Route::get('/success-confirm/{order}', function ($orderId) {
+                $order = Order::findOrFail($orderId);
+                return view('user.orders.success-confirm', compact('order'));
+            })->name('user.orders.success-confirm');
+
+        });
+        Route::prefix('comments')->group(function () {
+            Route::get('/create/{id}', [CommentController::class, 'create'])
+                ->name('user.comments.create');
+            Route::post('/', [CommentController::class, 'store'])
+                ->name('user.comments.store');
         });
     });
 });

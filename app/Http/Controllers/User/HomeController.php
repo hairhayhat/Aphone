@@ -6,6 +6,7 @@ use App\Models\Storage;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Comment;
 
 
 class HomeController extends Controller
@@ -77,25 +78,40 @@ class HomeController extends Controller
 
     public function detail($id)
     {
+
         $product = Product::with([
-            'variants' => function ($query) {
-                $query->with(['color', 'storage']);
-            }
+            'variants.color',
+            'variants.storage',
+            'category'
         ])->findOrFail($id);
-        $relatedProducts = Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
+
+        $comments = Comment::where('product_id', $id)
             ->with([
-                'variants' => function ($query) {
-                    $query->with(['color', 'storage']);
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'avatar');
                 }
             ])
+            ->where('status', 'approved')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'comments_page');
+
+        $relatedProducts = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->with(['variants.color', 'variants.storage'])
+            ->select('id', 'name', 'image', 'price', 'is_sale', 'sale_price')
             ->paginate(10);
 
-        return view('user.products.detail', compact('product', 'relatedProducts'));
+        return view('user.products.detail', [
+            'product' => $product,
+            'relatedProducts' => $relatedProducts,
+            'comments' => $comments,
+            'totalReviews' => $comments->total()
+        ]);
     }
 
     public function orderIndex(Request $request)
     {
+        $query = $request->input('q');
         $products = Product::query()
             ->withCount('favoritedBy')
             ->when($request->category, fn($q) => $q->where('category_id', $request->category))
@@ -131,6 +147,10 @@ class HomeController extends Controller
             }, function ($q) {
                 return $q->latest();
             })
+            ->when($query, function ($q) use ($query) {
+                return $q->where('name', 'like', "%{$query}%")
+                    ->orWhere('description', 'like', "%{$query}%");
+            })
 
             ->paginate(15)->withQueryString();
 
@@ -138,6 +158,29 @@ class HomeController extends Controller
         $storages = Storage::get();
 
         return view('user.products.index', compact('products', 'categories', 'storages'));
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+        $categories = Category::get();
+        $storages = Storage::get();
+
+
+        $products = Product::when($query, function ($q) use ($query) {
+            return $q->where('name', 'like', "%{$query}%")
+                ->orWhere('description', 'like', "%{$query}%");
+        })
+            ->with(['variants.color', 'variants.storage'])
+            ->paginate(12)
+            ->appends(['q' => $query]);
+
+        return view('user.products.search', [
+            'products' => $products,
+            'searchQuery' => $query,
+            'categories' => $categories,
+            'storages' => $storages
+        ]);
     }
 
 
