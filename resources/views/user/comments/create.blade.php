@@ -10,8 +10,16 @@
                     <form action="{{ route('user.comments.store') }}" method="POST">
                         @csrf
 
-                        <input type="hidden" name="product_id" value="{{ $order->items[0]->product_id }}">
-                        <h1>{{ $order->items[0]->product_id }}</h1>
+                        <div class="mb-4">
+                            <label>Sản phẩm cần đánh giá</label>
+                            <select name="product_id" class="form-control" required>
+                                @foreach ($order->items as $item)
+                                    <option value="{{ $item->product_id }}">
+                                        {{ $item->product->name }} ({{ $item->quantity }}x)
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         <!-- Đánh giá sao -->
                         <div class="mb-4">

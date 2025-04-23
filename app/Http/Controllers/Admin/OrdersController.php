@@ -99,12 +99,17 @@ class OrdersController extends Controller
 
     public function showComment($id)
     {
-        $order = Order::with('items')->findOrFail($id);
+        $order = Order::findOrFail($id);
+
         $userId = $order->user_id;
-        $productId = $order->items[0]->product_id;
+
+        $items = $order->items;
+
+        $productIds = $order->items->pluck('product_id');
         $comment = Comment::where('user_id', $userId)
-            ->where('product_id', $productId)
+            ->whereIn('product_id', $productIds)
             ->first();
+
         return view('admin.orders.show-comment', compact('order', 'comment'));
     }
 

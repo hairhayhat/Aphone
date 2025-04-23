@@ -11,28 +11,36 @@ class CommentController extends Controller
 {
     public function create($id)
     {
-        $order = Order::findOrFail($id)->with('items')->first();
-        return view('user.comments.create', compact('order'));
+        $order = Order::with('items.product')->findOrFail($id);
+        if ($order->items->isEmpty()) {
+            abort(404, 'Đơn hàng không có sản phẩm');
+        }
+
+        return view('user.comments.create', [
+            'order' => $order,
+            'products' => $order->items->pluck('product')
+        ]);
     }
     public function store(Request $request)
     {
+        // Bỏ tham số $orderId nếu không cần thiết
         $userId = auth()->id();
         $productId = $request->input('product_id');
 
         $validatedData = $request->validate([
             'content' => 'required|string|max:255',
             'rating' => 'required|integer|between:1,5',
+            'product_id' => 'required|exists:products,id' // Thêm validation cho product_id
         ]);
 
         $comment = Comment::create([
             'user_id' => $userId,
-            'product_id' => $productId,
+            'product_id' => $validatedData['product_id'],
             'content' => $validatedData['content'],
             'rating' => $validatedData['rating'],
-            'status' => 'pending', // Set the status to 'pending' by default
+            'status' => 'pending',
         ]);
 
-        return redirect()->route('home')->with('success', 'Cảm ơn bạn đã đánh giá sản phẩm!. Bình luận của bạn sẽ được xem xét và phê duyệt trong thời gian sớm nhất.');
+        return redirect()->route('user.orders.index')->with('success', 'Cảm ơn bạn đã đánh giá sản phẩm!');
     }
-
 }

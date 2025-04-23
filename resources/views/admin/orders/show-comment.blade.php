@@ -77,8 +77,6 @@
                     <!-- Order Summary -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         @if ($comment)
-
-
                             <div>
                                 <h3 class="text-lg font-medium mb-2">{{ __('Phản hồi từ khách hàng') }}</h3>
                                 <div class="space-y-2">
